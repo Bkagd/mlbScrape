@@ -1,5 +1,6 @@
 //exporting our models
 
-module.exports = {
-    Article = require("./Article")
-};
+module.exports ={
+ Comments: require("./Comment"),
+ Article: require("./Article")
+}; 

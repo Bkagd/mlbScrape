@@ -8,7 +8,7 @@ const cheerio = require("cheerio");
 
 // requiring models
 
-// const db = require("./models");
+const db = require("./models");
 
 var PORT = 3000;
 
@@ -25,7 +25,7 @@ app.use(express.static("public"));
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
 mongoose.Promise = Promise;
 mongoose.connect(MONGODB_URI, {
-    useMongoClient: true
+    // useMongoClient: true
 });
 
 //routing
@@ -33,23 +33,27 @@ mongoose.connect(MONGODB_URI, {
 app.get("/scrape", function(req, res) {
     //getting html content with axios request
     
-    axios.get("https://www.mlb.com/dbacks").then(function(response) {
-        
+    axios.get("https://www.mlb.com/dbacks").then(function(html, err) {
+        console.log("hello alan");
+        let resArayy = [];
+
         //load requested html data into cheerio, saving it to $
         
-        let $ = cheerio.load(response.data);
+        let $ = cheerio.load(html);
 
         //grabbing what we need and saving it into a results object.
         
         $("li.p-headline-stack__headline").each(function(i, element) {
             let result = {};
-            result.title = $(this)
-            .children("a")
-            .text();
-            result.link = $(this)
-            .children("a")
-            .attr("href");
+            let title = $(element).children().text();
+            let link = $(element).children().attr("href");
+            result.push({
+                title: title,
+                link: link
+            });
+            resArray.push(result);
 
+            console.log(resArray);
         //creating new article using our result object we just created
         //and console logging the result or an error.
         
