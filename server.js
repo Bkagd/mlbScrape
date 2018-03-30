@@ -35,34 +35,31 @@ app.get("/scrape", function(req, res) {
     
     axios.get("https://www.mlb.com/dbacks").then(function(html, err) {
         console.log("hello alan");
-        let resArayy = [];
+        
 
         //load requested html data into cheerio, saving it to $
         
-        let $ = cheerio.load(html);
+        let $ = cheerio.load(html.data);
 
         //grabbing what we need and saving it into a results object.
-        
-        $("li.p-headline-stack__headline").each(function(i, element) {
-            let result = {};
-            let title = $(element).children().text();
-            let link = $(element).children().attr("href");
-            result.push({
-                title: title,
-                link: link
-            });
-            resArray.push(result);
 
-            console.log(resArray);
+            
+        $(".p-headline-stack__link").each((i, element) => {
+            let result = {};
+            result.title = $(element).text();
+            result.link = $(element).attr("href");
+            
+            
+            console.log(result);
         //creating new article using our result object we just created
         //and console logging the result or an error.
         
-        db.article.create(result)
+        db.Article.create(result)
             .then(function(dbArticle) {
                 console.log(dbArticle);
             })
             .catch(function(err) {
-                return res.json(err);
+                 console.log(err);
             });
         });
         res.send("Scrape Complete");
